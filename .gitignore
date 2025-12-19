@@ -49,3 +49,9 @@ temp/
 
 # TypeScript
 *.tsbuildinfo
+
+# Vite cache
+.vite/
+*/.vite/
+vite/deps/
+*/vite/deps/
