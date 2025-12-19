@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-// Database configuration
+// mysql connection config
 const dbConfig = {
   host: process.env.DB_HOST || 'localhost',
   user: process.env.DB_USER || 'root',
@@ -15,10 +15,10 @@ const dbConfig = {
   queueLimit: 0
 };
 
-// Create connection pool
+// using connection pool for better performance
 const pool = mysql.createPool(dbConfig);
 
-// Test database connection
+// check if db connection works
 export const testConnection = async (): Promise<boolean> => {
   try {
     const connection = await pool.getConnection();
@@ -31,7 +31,7 @@ export const testConnection = async (): Promise<boolean> => {
   }
 };
 
-// Execute query helper
+// helper function to run queries
 export const query = async (sql: string, params?: any[]) => {
   try {
     const [results] = await pool.execute(sql, params);

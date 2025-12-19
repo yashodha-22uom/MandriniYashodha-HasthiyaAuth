@@ -5,15 +5,12 @@ import { query } from '../config/database';
 import { RegisterRequest, LoginRequest, AuthResponse, UserResponse } from '../types/user';
 import { RowDataPacket, ResultSetHeader } from 'mysql2';
 
-/**
- * Register a new user
- * POST /api/auth/register
- */
+// handle user registration
 export const register = async (req: Request, res: Response): Promise<void> => {
   try {
     const { full_name, email, password }: RegisterRequest = req.body;
 
-    // Validate input
+    // check if all required fields are present
     if (!full_name || !email || !password) {
       res.status(400).json({
         success: false,
@@ -22,9 +19,19 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // Validate email format
+    // validate full_name - must be at least 2 chars, no special chars except spaces
+    const nameRegex = /^[a-zA-Z\s]{2,50}$/;
+    if (!nameRegex.test(full_name.trim())) {
+      res.status(400).json({
+        success: false,
+        message: 'Full name must be 2-50 characters and contain only letters'
+      } as AuthResponse);
+      return;
+    }
+
+    // validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    if (!emailRegex.test(email.trim())) {
       res.status(400).json({
         success: false,
         message: 'Please provide a valid email address'
@@ -32,7 +39,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // Validate password length
+    // validate password - at least 6 chars, max 100
     if (password.length < 6) {
       res.status(400).json({
         success: false,
@@ -41,7 +48,25 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // Check if user already exists (by email)
+    if (password.length > 100) {
+      res.status(400).json({
+        success: false,
+        message: 'Password must not exceed 100 characters'
+      } as AuthResponse);
+      return;
+    }
+
+    // check for common weak passwords
+    const weakPasswords = ['password', '123456', 'qwerty', 'abc123', 'password123'];
+    if (weakPasswords.includes(password.toLowerCase())) {
+      res.status(400).json({
+        success: false,
+        message: 'Password is too weak. Please choose a stronger password'
+      } as AuthResponse);
+      return;
+    }
+
+    // check if email is already taken
     const existingUserByEmail = await query(
       'SELECT id FROM users WHERE email = ?',
       [email]
@@ -55,26 +80,26 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // Hash password
+    // hash the password before storing
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    // Insert user into database
+    // save user to database
     const result = await query(
       'INSERT INTO users (full_name, email, password_hash) VALUES (?, ?, ?)',
       [full_name, email, hashedPassword]
     ) as ResultSetHeader;
 
-    // Generate JWT token
+    // create jwt token for immediate login
     const jwtSecret: Secret = process.env.JWT_SECRET || 'your_jwt_secret_key_here';
-    // @ts-ignore - Type issue with jsonwebtoken options
+    // @ts-ignore - jwt types are weird with expiresIn
     const token = jwt.sign(
       { id: result.insertId, email },
       jwtSecret,
       { expiresIn: process.env.JWT_EXPIRES_IN || '24h' }
     );
 
-    // Return user data (without password)
+    // send back user data without password
     const userResponse: UserResponse = {
       id: result.insertId,
       full_name,
@@ -97,15 +122,12 @@ export const register = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-/**
- * Login user
- * POST /api/auth/login
- */
+// handle user login
 export const login = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password }: LoginRequest = req.body;
 
-    // Validate input
+    // validate both fields are provided
     if (!email || !password) {
       res.status(400).json({
         success: false,
@@ -114,7 +136,26 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // Find user by email
+    // validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) {
+      res.status(400).json({
+        success: false,
+        message: 'Please provide a valid email address'
+      } as AuthResponse);
+      return;
+    }
+
+    // validate password isn't empty string
+    if (password.trim().length === 0) {
+      res.status(400).json({
+        success: false,
+        message: 'Password cannot be empty'
+      } as AuthResponse);
+      return;
+    }
+
+    // lookup user in db
     const users = await query(
       'SELECT * FROM users WHERE email = ?',
       [email]
@@ -130,7 +171,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     const user = users[0];
 
-    // Compare password
+    // verify password hash
     const isPasswordValid = await bcrypt.compare(password, user.password_hash);
 
     if (!isPasswordValid) {
@@ -141,9 +182,9 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // Generate JWT token
+    // generate token for logged in session
     const jwtSecret: Secret = process.env.JWT_SECRET || 'your_jwt_secret_key_here';
-    // @ts-ignore - Type issue with jsonwebtoken options
+    // @ts-ignore - jwt types are weird with expiresIn
     const token = jwt.sign(
       { id: user.id, email: user.email },
       jwtSecret,
