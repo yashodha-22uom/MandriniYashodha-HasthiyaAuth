@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import ThemeToggle from '../components/ThemeToggle';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -37,12 +38,17 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-stone-950 flex items-center justify-center px-4 py-12 relative overflow-hidden">
+    <div className="min-h-screen bg-slate-50 dark:bg-stone-950 flex items-center justify-center px-4 py-12 relative overflow-hidden transition-colors duration-300">
       {/* animated background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-violet-900/20 via-stone-950 to-pink-900/20"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-violet-100 via-slate-50 to-pink-100 dark:from-violet-900/20 dark:via-stone-950 dark:to-pink-900/20"></div>
       <div className="absolute top-20 -left-4 w-72 h-72 bg-violet-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
       <div className="absolute top-20 -right-4 w-72 h-72 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-15 animate-blob animation-delay-2000"></div>
       <div className="absolute -bottom-8 left-20 w-72 h-72 bg-violet-600 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
+
+      {/* Theme Toggle - Top Right */}
+      <div className="absolute top-6 right-6 z-20">
+        <ThemeToggle />
+      </div>
 
       <div className="max-w-md w-full relative z-10">
         {/* header */}
@@ -52,14 +58,14 @@ const Login = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
             </svg>
           </div>
-          <h2 className="text-3xl font-bold text-slate-100 mb-2">
-            welcome back
+          <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2">
+            Welcome Back
           </h2>
-          <p className="text-slate-400">sign in to your account</p>
+          <p className="text-slate-600 dark:text-slate-400">Sign In To Your Account</p>
         </div>
 
         {/* form card */}
-        <div className="bg-stone-900/50 backdrop-blur-xl rounded-2xl shadow-2xl border border-stone-800 p-8">
+        <div className="bg-white/80 dark:bg-stone-900/50 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-200 dark:border-stone-800 p-8">
           {error && (
             <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/50 text-red-400 text-sm flex items-start gap-3">
               <svg className="w-5 h-5 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
@@ -86,7 +92,7 @@ const Login = () => {
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-slate-300 mb-2">
-                email address
+                Email Address
               </label>
               <div className="relative">
                 <input
@@ -97,7 +103,7 @@ const Login = () => {
                   onFocus={() => setFocusedField('email')}
                   onBlur={() => setFocusedField('')}
                   className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 transition-all outline-none"
-                  placeholder="you@example.com"
+                  placeholder="You@example.com"
                   disabled={loading}
                 />
                 {focusedField === 'email' && (
@@ -109,10 +115,10 @@ const Login = () => {
             <div>
               <div className="flex items-center justify-between mb-2">
                 <label htmlFor="password" className="block text-sm font-medium text-slate-300">
-                  password
+                  Password
                 </label>
                 <a href="#" className="text-xs text-violet-400 hover:text-violet-300 transition-colors">
-                  forgot?
+                  Forgot?
                 </a>
               </div>
               <div className="relative">
@@ -124,7 +130,7 @@ const Login = () => {
                   onFocus={() => setFocusedField('password')}
                   onBlur={() => setFocusedField('')}
                   className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 transition-all outline-none"
-                  placeholder="enter your password"
+                  placeholder="Enter Your Password"
                   disabled={loading}
                 />
                 {focusedField === 'password' && (
@@ -144,19 +150,19 @@ const Login = () => {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  signing in...
+                  Signing In...
                 </span>
               ) : (
-                'sign in'
+                'Sign In'
               )}
             </button>
           </form>
 
           <div className="mt-6 pt-6 border-t border-stone-800">
             <p className="text-center text-slate-400 text-sm">
-              don't have an account?{' '}
+              Don't Have An Account?{' '}
               <Link to="/register" className="text-violet-400 hover:text-violet-300 font-semibold transition-colors">
-                create one
+                Create One
               </Link>
             </p>
           </div>
@@ -167,7 +173,7 @@ const Login = () => {
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
               </svg>
-              secured with encryption
+              Secured With Encryption
             </div>
           </div>
         </div>

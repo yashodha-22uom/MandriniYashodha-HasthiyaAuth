@@ -82,7 +82,7 @@ export const authenticateToken = async (
 // useful for routes that work for both logged in and guest users
 export const optionalAuth = async (
   req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {

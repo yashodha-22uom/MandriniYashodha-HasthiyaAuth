@@ -29,7 +29,7 @@ export const getProfile = async (req: Request, res: Response): Promise<void> => 
       return;
     }
 
-    const user = users[0];
+    const user = users[0] as any;
 
     const userResponse: UserResponse = {
       id: user.id,
@@ -105,7 +105,7 @@ export const updateProfile = async (req: Request, res: Response): Promise<void> 
       return;
     }
 
-    const user = users[0];
+    const user = users[0] as any;
 
     const userResponse: UserResponse = {
       id: user.id,

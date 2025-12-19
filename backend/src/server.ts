@@ -28,14 +28,14 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' })); // parse url-enc
 
 // request logging middleware for dev environment
 if (NODE_ENV === 'development') {
-  app.use((req: Request, res: Response, next: NextFunction) => {
+  app.use((req: Request, _res: Response, next: NextFunction) => {
     console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
     next();
   });
 }
 
 // root endpoint
-app.get('/', (req: Request, res: Response) => {
+app.get('/', (_req: Request, res: Response) => {
   res.json({ 
     success: true,
     message: 'Welcome to HasthiyaAuth API',
@@ -49,7 +49,7 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 // health check endpoint
-app.get('/health', (req: Request, res: Response) => {
+app.get('/health', (_req: Request, res: Response) => {
   res.json({ 
     success: true,
     status: 'OK', 
@@ -71,7 +71,7 @@ app.use((req: Request, res: Response) => {
 });
 
 // global error handler
-app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
   console.error('Server error:', err);
   
   res.status(err.status || 500).json({

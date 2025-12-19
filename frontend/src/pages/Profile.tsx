@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import ThemeToggle from '../components/ThemeToggle';
 import api from '../utils/api';
 import hasthiyaLogo from '../assets/Hasthiyalogo.jpeg';
 
 const Profile = () => {
   const { user, logout, loading: authLoading } = useAuth();
-  const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [fullName, setFullName] = useState(user?.full_name || '');
   const [loading, setLoading] = useState(false);
@@ -23,8 +23,11 @@ const Profile = () => {
   }, [user]);
 
   const handleLogout = () => {
+    // Clear authentication
     logout();
-    navigate('/');
+    
+    // Force navigation to home page
+    window.location.href = '/';
   };
 
   const handleUpdate = async () => {
@@ -38,7 +41,7 @@ const Profile = () => {
     setSuccess('');
 
     try {
-      const response = await api.put('/user/profile', { full_name: fullName });
+      await api.put('/user/profile', { full_name: fullName });
       setSuccess('Profile updated successfully!');
       setIsEditing(false);
       
@@ -79,16 +82,16 @@ const Profile = () => {
   };
 
   return (
-    <div className="min-h-screen bg-stone-950 relative overflow-hidden">
+    <div className="min-h-screen bg-slate-50 dark:bg-stone-950 relative overflow-hidden transition-colors duration-300">
       {/* animated background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-violet-900/20 via-stone-950 to-pink-900/20"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-violet-100 via-slate-50 to-pink-100 dark:from-violet-900/20 dark:via-stone-950 dark:to-pink-900/20"></div>
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-violet-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
       <div className="absolute top-0 right-1/4 w-96 h-96 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-15 animate-blob animation-delay-2000"></div>
       <div className="absolute bottom-0 left-1/2 w-96 h-96 bg-violet-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
 
       <div className="relative z-10">
         {/* navbar */}
-        <nav className="border-b border-stone-800 bg-stone-900/30 backdrop-blur-xl sticky top-0 z-50">
+        <nav className="border-b border-slate-200 dark:border-stone-800 bg-white/70 dark:bg-stone-900/30 backdrop-blur-xl sticky top-0 z-50">
           <div className="container mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
               <Link to="/" className="flex items-center gap-3 group">
@@ -96,19 +99,22 @@ const Profile = () => {
                   <img src={hasthiyaLogo} alt="Hasthiya" className="w-full h-full object-cover" />
                 </div>
                 <div>
-                  <span className="text-slate-100 font-bold text-xl block">HasthiyaAuth</span>
-                  <span className="text-xs text-slate-400">My Profile</span>
+                  <span className="text-slate-900 dark:text-slate-100 font-bold text-xl block">HasthiyaAuth</span>
+                  <span className="text-xs text-slate-600 dark:text-slate-400">My Profile</span>
                 </div>
               </Link>
-              <button
-                onClick={handleLogout}
-                className="flex items-center gap-2 px-4 py-2 bg-red-500/10 text-red-400 rounded-lg border border-red-500/50 hover:bg-red-500/20 hover:border-red-500/70 transition-all group"
-              >
-                <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                </svg>
-                <span className="font-medium">logout</span>
-              </button>
+              <div className="flex items-center gap-3">
+                <ThemeToggle />
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-2 px-4 py-2 bg-red-500/10 text-red-400 rounded-lg border border-red-500/50 hover:bg-red-500/20 hover:border-red-500/70 transition-all group"
+                >
+                  <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                  <span className="font-medium">logout</span>
+                </button>
+              </div>
             </div>
           </div>
         </nav>
@@ -227,7 +233,7 @@ const Profile = () => {
                       <svg className="w-5 h-5 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                       </svg>
-                      personal information
+                      Personal Information
                     </h2>
                     {!isEditing && (
                       <button
@@ -318,7 +324,7 @@ const Profile = () => {
                     <svg className="w-5 h-5 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                     </svg>
-                    security & privacy
+                    Security & Privacy
                   </h2>
 
                   <div className="grid sm:grid-cols-2 gap-4">
@@ -362,7 +368,7 @@ const Profile = () => {
                     <svg className="w-5 h-5 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    account details
+                    Account Details
                   </h3>
                   
                   <div className="space-y-4">
@@ -394,7 +400,7 @@ const Profile = () => {
                     <svg className="w-5 h-5 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
-                    activity
+                    Activity
                   </h3>
                   
                   <div className="space-y-3">
