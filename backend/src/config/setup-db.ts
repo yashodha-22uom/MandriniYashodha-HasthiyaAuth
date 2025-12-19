@@ -7,7 +7,7 @@ dotenv.config();
 
 const setupDatabase = async () => {
   try {
-    console.log('🔧 Setting up database...\n');
+    console.log('Setting up database...\n');
 
     // Connect to MySQL without specifying database
     const connection = await mysql.createConnection({
@@ -17,12 +17,12 @@ const setupDatabase = async () => {
       port: parseInt(process.env.DB_PORT || '3306'),
     });
 
-    console.log('✅ Connected to MySQL server');
+    console.log('Connected to MySQL server');
 
     // Create database if not exists
     const dbName = process.env.DB_NAME || 'hasthiyaauth';
     await connection.query(`CREATE DATABASE IF NOT EXISTS ${dbName}`);
-    console.log(`✅ Database '${dbName}' created or already exists`);
+    console.log(`Database '${dbName}' created or already exists`);
 
     // Use the database
     await connection.query(`USE ${dbName}`);
@@ -45,17 +45,17 @@ const setupDatabase = async () => {
       await connection.query(statement);
     }
 
-    console.log('✅ Tables created successfully');
-    console.log('\n📊 Database schema:');
+    console.log(' Tables created successfully');
+    console.log('\n Database schema:');
     console.log('   - users');
     console.log('   - refresh_tokens');
 
     await connection.end();
-    console.log('\n✨ Database setup completed successfully!');
-    console.log('\n🚀 You can now start the server with: npm run dev\n');
+    console.log('\n Database setup completed successfully!');
+    console.log('\n You can now start the server with: npm run dev\n');
     
   } catch (error) {
-    console.error('❌ Database setup failed:', error);
+    console.error(' Database setup failed:', error);
     process.exit(1);
   }
 };

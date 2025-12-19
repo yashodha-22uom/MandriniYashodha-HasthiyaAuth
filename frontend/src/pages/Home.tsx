@@ -79,6 +79,9 @@ const Home = () => {
                   </svg>
                   Secure Authentication
                 </div>
+                <h1 className="text-5xl md:text-7xl font-bold text-slate-900 dark:text-slate-100 mb-6">
+                  Hasthiya Auth <span className="bg-gradient-to-r from-violet-600 to-pink-600 dark:from-violet-400 dark:to-pink-400 bg-clip-text text-transparent">Portal</span>
+                </h1>
                 <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto mb-12">
                   Modern Authentication System With JWT Tokens, Bcrypt Encryption, And A Clean User Experience
                 </p>
