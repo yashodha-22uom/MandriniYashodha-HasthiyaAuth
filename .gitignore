@@ -18,6 +18,12 @@ dist/
 build/
 *.tsbuildinfo
 
+# Vite cache
+.vite/
+*/.vite/
+vite/deps/
+*/vite/deps/
+
 # IDE and Editor files
 .vscode/
 .idea/
@@ -49,3 +55,4 @@ temp/
 
 # TypeScript
 *.tsbuildinfo
+config.bat
