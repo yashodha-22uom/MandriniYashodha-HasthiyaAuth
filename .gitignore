@@ -55,3 +55,4 @@ temp/
 */.vite/
 vite/deps/
 */vite/deps/
+config.bat
