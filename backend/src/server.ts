@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { testConnection } from './config/database';
+import authRoutes from './routes/authRoutes';
 
 // Load environment variables
 dotenv.config();
@@ -22,6 +23,9 @@ app.get('/', (req, res) => {
 app.get('/health', (req, res) => {
   res.json({ status: 'OK', message: 'Server is healthy' });
 });
+
+// Auth routes
+app.use('/api/auth', authRoutes);
 
 // Start server and test database connection
 const startServer = async () => {
